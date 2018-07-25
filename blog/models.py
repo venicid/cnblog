@@ -3,8 +3,8 @@ from django.db import models
 
 # Create your models here.
 
-
 from django.contrib.auth.models import AbstractUser
+
 
 # 用户认证表
 # 额外添加新的字段，直接继承User的父类AbstractUser
@@ -64,9 +64,9 @@ class Article(models.Model):
     create_time = models.DateTimeField(verbose_name='创建时间', auto_now_add=True)
     content = models.TextField()
 
-    comment_count = models.IntegerField(default=0)
-    up_count = models.IntegerField(default=0)
-    down_count = models.IntegerField(default=0)
+    comment_count = models.IntegerField(default=0)      # 评论数
+    up_count = models.IntegerField(default=0)           # 点赞数
+    down_count = models.IntegerField(default=0)         # 踩数
 
     user = models.ForeignKey(verbose_name='作者', to='UserInfo', to_field='nid', on_delete=models.CASCADE)
     category = models.ForeignKey(to='Category', to_field='nid', null=True, on_delete=models.CASCADE)
@@ -101,10 +101,10 @@ class ArticleUpDown(models.Model):
     """
 
     nid = models.AutoField(primary_key=True)
-    user = models.ForeignKey('UserInfo', null=True, on_delete=models.CASCADE)
-    article = models.ForeignKey("Article", null=True, on_delete=models.CASCADE)
-    is_up = models.BooleanField(default=True)
-
+    user = models.ForeignKey('UserInfo', null=True, on_delete=models.CASCADE)           # alex
+    article = models.ForeignKey("Article", null=True, on_delete=models.CASCADE)         # art1
+    is_up = models.BooleanField(default=True)                                           # 1
+                                                                                        # 用户alex，对文章art1，赞了一下
     class Meta:
         unique_together = [
             ('article', 'user'),
@@ -123,6 +123,8 @@ class Comment(models.Model):
     content = models.CharField(verbose_name='评论内容', max_length=255)
     create_time = models.DateTimeField(verbose_name='创建时间', auto_now_add=True)
     parent_comment = models.ForeignKey('self', null=True, on_delete=models.CASCADE)
+
+    # parent_comment = models.ForeignKey('Comment', null=True, on_delete=models.CASCADE)   # 自关联
 
     def __str__(self):
         return self.content

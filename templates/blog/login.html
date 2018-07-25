@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="/static/blog/bs/css/bootstrap.css">
-
+    <script src="/static/js/jquery-3.2.1.min.js"></script>
 </head>
 <body>
 
@@ -23,65 +23,65 @@
                     <label for="id_password">密码</label>
                     <input type="password" id="id_password" class="form-control">
                 </div>
-
                 <div class="form-group">
-                    <label for="">验证码</label>
+                    <label for="id_valid_code_str">验证码</label>
                     <div class="row">
                         <div class="col-md-6">
-                            <input type="text" class="valid-code form-control" id="id_valid_code_str">
+                            <input type="text" id="id_valid_code_str" class="form-control">
                         </div>
                         <div class="col-md-6">
-                            {#                            <img  width="270" height="35" src="/static/blog/img/test1.png" alt="验证码">#}
-                            <img width="270" height="35" src="/blog/get_validCode/" id="id_valid_code_img" alt="验证码">
+                            <img src="/blog/get_validCode/" id="id_valid_code_img" width="270" height="35" title="验证码"
+                                 alt="">
                         </div>
                     </div>
                 </div>
                 <input type="button" class="btn btn-default login-btn" value="登录"><span class="error"></span>
+
             </form>
         </div>
     </div>
+</div>
+<script type="text/javascript">
+    //刷新验证码
+    $(function () {
+        $("#id_valid_code_img").click(function () {
+            $(this)[0].src += "?"
+        })
+    });
 
-    <script src="/static/js/jquery-3.2.1.min.js"></script>
-    <script type="text/javascript">
-        $(function () {
-            {#     验证码刷新   $('#id_valid_code_img')[0].src+="?"#}
-            //刷新验证码
-            $("#id_valid_code_img").click(function () {
-                $(this)[0].src += "?"
-            })
+    //登录验证
+    $(function () {
+        $('.login-btn').click(function () {
+            $.ajax({
+                url: '',
+                type: 'post',
+                data: {
+                    user: $("#id_username").val(),
+                    pwd: $("#id_password").val(),
+                    valid_code_str: $("#id_valid_code_str").val(),
+                    csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()
 
-            //登录验证
-            $('.login-btn').click(function () {
+                },
+                success: function (data) {
+                    console.log(data)
 
-                $.ajax({
-                    url: "",
-                    type: "post",
-                    data: {
-                        user: $("#id_username").val(),
-                        pwd: $("#id_password").val(),
-                        valid_code: $('#id_valid_code_str').val(),{# <input type='hidden' name='csrfmiddlewaretoken' value='gcrcSoidwJkiZvsur3m189sTryPvhbRWzfSsPKNvLkcwELUXMbJ2oBQcainGkBtd' />#}
-                        csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()
-                    },
-                    success: function (data) {
-                        console.log(data)
-
-                        if (data.user){
-{#                            ajax跳转到url#}
-                            location.href = "/blog/index/"
-                        }
-                        else {
-                            $('.error').text(data.msg).css({'color':'red', 'margin-left': '20px'});
-                            setTimeout(function () {
-                                $('.error').text("")
-                            }, 1000)
-                        }
+                    if (data.user) {
+                        location.href = "/blog/index"
                     }
+                    else {
+                        $('.error').text(data.msg).css({'color': 'red', 'margin-left': '20px'});
 
-                })
+                        //定时器 1s后error_msg 消失
+                        setTimeout(function () {
+                            $('.error').text("")
+                        }, 1000)
+                    }
+                }
+
             })
         })
-
-    </script>
-</div>
+    })
+</script>
 </body>
+
 </html>

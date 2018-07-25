@@ -139,3 +139,11 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
+
+
+# MEDIA配置:与用户上传相关的配置
+# 配置1：用户上传头像的文件
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+# 配置2：开放media目录给用户
+MEDIA_URL = "/media/"
