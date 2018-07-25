@@ -1,7 +1,0 @@
-
-# 获得input提交的头像数据
-
-$("#avatar")[0].files[0]
-File {name: "mingren.jpg", lastModified: 1532439149381, lastModifiedDate: Tue Jul 24 2018 21:32:29 GMT+0800 (中国标准时间), webkitRelativePath: "", size: 84358…}
-$("#avatar")[0].files[0]
-File {name: "zuozhu.jpg", lastModified: 1532439086274, lastModifiedDate: Tue Jul 24 2018 21:31:26 GMT+0800 (中国标准时间), webkitRelativePath: "", size: 7343…}
