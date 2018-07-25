@@ -145,5 +145,6 @@ STATICFILES_DIRS = [
 # 配置1：用户上传头像的文件
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
+
 # 配置2：开放media目录给用户
 MEDIA_URL = "/media/"

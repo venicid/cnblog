@@ -2,6 +2,8 @@ from django.shortcuts import render, HttpResponse, redirect
 from blog.utils.validCode import get_validCode_img  # 导入验证码函数
 from django.http import JsonResponse  # Json数据返回到前端
 from django.contrib import auth     # 用户认证组件
+from blog.models import UserInfo
+from blog.myForms import UserForm  # froms组件
 
 
 def login(request):
@@ -102,3 +104,53 @@ def get_validCode(request):
 def index(request):
 
     return HttpResponse(request.user.username)
+
+
+
+
+
+def register(request):
+    """
+    注册页面
+    :param request:
+    :return:
+    """
+    # if request.method == 'POST':
+    if request.is_ajax():
+        response = {'user':None, "msg":None}
+
+        form = UserForm(request.POST)
+        if form.is_valid():
+            response['user'] = form.cleaned_data.get("user")
+
+            # 生成一条数据
+            user = request.POST.get("user")
+            pwd = request.POST.get("pwd")
+            email = request.POST.get("email")
+            avatar_obj = request.FILES.get("avatar")
+            print(avatar_obj)
+
+            extra_fields = {}
+            if avatar_obj:
+                extra_fields["avatar"] = avatar_obj
+
+            UserInfo.objects.create_user(username=user, password=pwd, email=email, **extra_fields)
+
+            """
+            if avatar_obj:
+                # 快捷键 alt + f7
+                UserInfo.objects.create_user(username=user, password=pwd, email=email, avatar=avatar_obj)
+            else:
+                UserInfo.objects.create_user(username=user, password=pwd, email=email)
+            """
+
+        else:
+            print(form.cleaned_data)
+            print(form.errors)
+            response['msg'] = form.errors
+
+        return JsonResponse(response)
+
+    form = UserForm
+
+    return render(request, "blog/register.html", {'form':form})
