@@ -119,15 +119,21 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
+
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+
+# 时区选择
+# TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+# 转换时区
+# USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -148,3 +154,23 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # 配置2：开放media目录给用户
 MEDIA_URL = "/media/"
+
+
+"""
+# 发送邮件
+EMAIL_USE_SSL = True
+# EMIAL_HOST = 'smtp.exmail.qq.com'       # 如果是163 改成smtp.163.com
+EMAIL_HOST = 'smtp.qq.com'  # 如果是 163 改成 smtp.163.com
+EMAIL_PORT = 465
+EMAIL_HOST_USER = '719630940@qq.com'        # 账号
+EMAIL_HOST_PASSWORD = 'ordcybvnndzubdie'    # qq邮箱的授权码而不是密码
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+"""
+
+
+LOGIN_URL = "/login/"
+
+
+
+
+

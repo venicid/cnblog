@@ -30,13 +30,13 @@
                             <input type="text" id="id_valid_code_str" class="form-control">
                         </div>
                         <div class="col-md-6">
-                            <img src="/blog/get_validCode/" id="id_valid_code_img" width="270" height="35" title="验证码"
+                            <img src="/get_validCode/" id="id_valid_code_img" width="270" height="35" title="验证码"
                                  alt="">
                         </div>
                     </div>
                 </div>
                 <input type="button" class="btn btn-default login-btn" value="登录"><span class="error"></span>
-                <a href="/blog/register" class="btn pull-right btn-success ">注册</a>
+                <a href="/register" class="btn pull-right btn-success ">注册</a>
             </form>
         </div>
     </div>
@@ -66,7 +66,7 @@
                     console.log(data)
 
                     if (data.user) {
-                        location.href = "/blog/index"
+                        location.href = "/index"
                     }
                     else {
                         $('.error').text(data.msg).css({'color': 'red', 'margin-left': '20px'});

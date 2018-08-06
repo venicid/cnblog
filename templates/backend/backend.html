@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/bootstrap3/css/bootstrap.css">
+    <style type="text/css">
+        .glyphicon-comment {
+            vertical-align: -1px;
+        }
+    </style>
+</head>
+<body>
+<div class="site-header">
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">
+                    后台管理
+                </a>
+            </div>
+        </div>
+    </nav>
+</div>
+<div class="site-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2 col-lg-offset-1">
+                <div class="panel panel-default">
+                    <div class="panel-heading">操作</div>
+                    <div class="panel-body">
+                        <a href="/cn_backend/add_article/">添加文章</a>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-8">
+                <div>
+                    <ul class="nav nav-tabs">
+                        <li role="presentation" class="active"><a href="#">文章</a></li>
+                        <li role="presentation"><a href="#">日记</a></li>
+                        <li role="presentation"><a href="#">随笔</a></li>
+                        <li role="presentation"><a href="#">相册</a></li>
+                    </ul>
+                </div>
+
+                <div class="tab-content">
+                        <div class="article_list small">
+                            <table class="table table-hover table-striped">
+                                <thead>
+                                <th>标题</th>
+                                <th>评论数</th>
+                                <th>点赞数</th>
+                                <th>操作</th>
+                                <th>操作</th>
+                                </thead>
+
+                                <tbody>
+                                {% for article in article_list %}
+                                    <tr>
+                                        <td>{{ article.title }}</td>
+                                        <td>{{ article.comment_count }}</td>
+                                        <td>{{ article.up_count }}</td>
+                                        <td><a href="">编辑</a></td>
+                                        <td><a href="">删除</a></td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+
+                            </table>
+                        </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

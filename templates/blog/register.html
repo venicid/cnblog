@@ -35,6 +35,8 @@
                 </div>
 
                 <input type="button" class="btn btn-success register-btn" value="注册">
+                <a href="/login" class="btn pull-right btn-primary ">登录</a>
+
             </form>
         </div>
     </div>
@@ -88,7 +90,7 @@
                 success: function (data) {
                     console.log(data);
                     if (data.user) { //注册成功
-                        location.href = "/blog/login"
+                        location.href = "/login"
 
                     } else {
                         //清空错误信息,和div的样式

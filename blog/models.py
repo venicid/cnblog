@@ -99,7 +99,6 @@ class ArticleUpDown(models.Model):
     """
     点赞表
     """
-
     nid = models.AutoField(primary_key=True)
     user = models.ForeignKey('UserInfo', null=True, on_delete=models.CASCADE)           # alex
     article = models.ForeignKey("Article", null=True, on_delete=models.CASCADE)         # art1
