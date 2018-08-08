@@ -1,18 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="/static/blog/bs/css/bootstrap.css">
-    <script src="/static/js/jquery-3.2.1.min.js"></script>
-</head>
-<body>
+{% extends 'base.html' %}
 
-<h3>登录页面</h3>
+{% block title %}
+    <title>登录页面</title>
+{% endblock %}
 
-<div class="container">
+{% block site-header %}
+    {% include './index-header.html' %}
+{% endblock %}
+
+{% block midBox %}
     <div class="row">
-        <div class="col-md-6 col-lg-offset-3">
+        <div class="col-md-8 col-lg-offset-2">
+            <h3 class="text-center">登录页面</h3>
             <form>
                 {% csrf_token %}
                 <div class="form-group">
@@ -35,53 +34,52 @@
                         </div>
                     </div>
                 </div>
-                <input type="button" class="btn btn-default login-btn" value="登录"><span class="error"></span>
-                <a href="/register" class="btn pull-right btn-success ">注册</a>
+                <input type="button" class="btn btn-primary pull-right login-btn" value="登录"><span class="error"></span>
             </form>
         </div>
     </div>
-</div>
-<script type="text/javascript">
-    //刷新验证码
-    $(function () {
-        $("#id_valid_code_img").click(function () {
-            $(this)[0].src += "?"
-        })
-    });
 
-    //登录验证
-    $(function () {
-        $('.login-btn').click(function () {
-            $.ajax({
-                url: '',
-                type: 'post',
-                data: {
-                    user: $("#id_username").val(),
-                    pwd: $("#id_password").val(),
-                    valid_code_str: $("#id_valid_code_str").val(),
-                    csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()
+{% endblock %}
 
-                },
-                success: function (data) {
-                    console.log(data)
+{% block js %}
 
-                    if (data.user) {
-                        location.href = "/index"
+    <script type="text/javascript">
+        //刷新验证码
+        $(function () {
+            $("#id_valid_code_img").click(function () {
+                $(this)[0].src += "?"
+            })
+        });
+
+        //登录验证
+        $(function () {
+            $('.login-btn').click(function () {
+                $.ajax({
+                    url: '',
+                    type: 'post',
+                    data: {
+                        user: $("#id_username").val(),
+                        pwd: $("#id_password").val(),
+                        valid_code_str: $("#id_valid_code_str").val(),
+                        csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()
+
+                    },
+                    success: function (data) {
+                        if (data.user) {
+                            location.href = "/"
+                        }
+                        else {
+                            $('.error').text(data.msg).css({'color': 'red'});
+
+                            //定时器 1s后error_msg 消失
+                            setTimeout(function () {
+                                $('.error').text("")
+                            }, 1000)
+                        }
                     }
-                    else {
-                        $('.error').text(data.msg).css({'color': 'red', 'margin-left': '20px'});
 
-                        //定时器 1s后error_msg 消失
-                        setTimeout(function () {
-                            $('.error').text("")
-                        }, 1000)
-                    }
-                }
-
+                })
             })
         })
-    })
-</script>
-</body>
-
-</html>
+    </script>
+{% endblock %}

@@ -1,153 +1,108 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="/static/bootstrap3/css/bootstrap.css">
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>博客园主页</title>
+{% endblock %}
+
+{% block css %}
     <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        body {
+            font-family: verdana, Arial, Helvetica, sans-serif;
+            font-size: 10pt;
+            line-height: 1.8em;
+        }
         #id_user_icon {
             margin-right: 10px;
             vertical-align: -2px;
         }
-        .pub_info{
-            margin-top:10px;
+
+        .pub_info {
+            margin-top: 10px;
         }
-        .pub_info .glyphicon-comment{
+
+        .pub_info .glyphicon-comment {
             vertical-align: -1px;
         }
     </style>
 
-</head>
-<body>
-
-<div class="site-header">
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">博客园</a>
-            </div>
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                    <li class="active"><a href="#">随笔 <span class="sr-only">(current)</span></a></li>
-                    <li><a href="#">新闻</a></li>
-                    <li><a href="#">博文</a></li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-
-                    {% if request.user.is_authenticated %}
-                        <li><a href=""><span class="glyphicon glyphicon-user"
-                                             id="id_user_icon"></span>{{ request.user.username }}</a>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                               aria-haspopup="true" aria-expanded="false">Settings <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">修改密码</a></li>
-                                <li><a href="#">修改头像</a></li>
-                                <li><a href="/logout">注销</a></li>
-                            </ul>
-                        </li>
-
-                    {% else %}
-                        <li><a href="/login">登录</a></li>
-                        <li><a href="/register">注册</a></li>
-                    {% endif %}
+{% endblock %}
 
 
-                </ul>
-            </div><!-- /.navbar-collapse -->
-        </div><!-- /.container-fluid -->
-    </nav>
-
-</div>
+{% block site-header %}
+    {% include 'blog/index-header.html' %}
+{% endblock %}
 
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-3">
-            <div class="panel panel-default">
-                <div class="panel-heading">Panel heading without title</div>
-                <div class="panel-body">
-                    Panel content
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Panel title</h3>
-                </div>
-                <div class="panel-body">
-                    Panel content
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">Panel heading without title</div>
-                <div class="panel-body">
-                    Panel content
-                </div>
-            </div>
+{% block leftBox %}
+    <div class="leftBox">
+        <div class="panel panel-default">
+            <li class="panel-heading">最受欢迎的博主</li>
+            {% for user in user_list %}
+                <li style="margin:0 0 5px 25px "><a href="/{{ user.username }}/">{{ user.username }}</a></li>
+            {% endfor %}
         </div>
+    </div>
+{% endblock %}
 
-        <div class="col-md-6">
-            <div class="article_list">
-                {% for article in article_list %}
-                    <h5><a href="">{{ article.title }}</a></h5>
-                    <div class="article-desc">
+
+{% block midBox %}
+    <div class="article_list">
+        {% for article in current_page_data %}
+            <h5><a href={% url 'blog:article_detail'  username=article.user article_id=article.pk %}>{{ article.title }}</a></h5>
+            <div class="article-desc">
                         <span class="media-left">
-                            <a href="">
+                            <a href="/{{ user.username }}/">
                                 <img width="60" height="60" src="/media/{{ article.user.avatar }}" alt="">
                             </a>
                         </span>
-                        <span class="media-right">{{ article.desc|safe }}</span>
-                    </div>
-                    <div class="small pub_info">
-                        <span><a href="">{{ article.user.username }}</a></span>&nbsp;&nbsp;&nbsp;
-                        <span>发布于&nbsp;&nbsp;{{ article.create_time|date:"Y-m-d H:m:s" }}</span>&nbsp;&nbsp;&nbsp;
-                        <span class="glyphicon glyphicon-comment"></span>
-                        <span>评论({{ article.comment_count }})</span>&nbsp;&nbsp;&nbsp;
-                        <span class="glyphicon glyphicon-thumbs-up"></span>
-                        <span class="">点赞({{ article.up_count }})</span>
-                    </div>
-                    <hr>
-                {% endfor %}
+                <span class="media-right">{{ article.desc|safe }}</span>
+            </div>
+            <div class="small pub_info">
+                <span><a href="/{{ user.username }}/">{{ article.user.username }}</a></span>&nbsp;&nbsp;&nbsp;
+                <span>发布于&nbsp;&nbsp;{{ article.create_time|date:"Y-m-d H:m:s" }}</span>&nbsp;&nbsp;&nbsp;
+                <span class="glyphicon glyphicon-comment"></span>
+                <span>评论({{ article.comment_count }})</span>&nbsp;&nbsp;&nbsp;
+                <span class="glyphicon glyphicon-thumbs-up"></span>
+                <span class="">点赞({{ article.up_count }})</span>
+            </div>
+            <hr>
+        {% endfor %}
+    </div>
 
-            </div>
-        </div>
+    {% include 'page.html' %}
+{% endblock %}
 
-        <div class="col-md-3">
-            <div class="p0anel panel-default">
-                <div class="panel-heading">Panel heading without title</div>
-                <div class="panel-body">
-                    Panel content
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Panel title</h3>
-                </div>
-                <div class="panel-body">
-                    Panel content
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">Panel heading without title</div>
-                <div class="panel-body">
-                    Panel content
-                </div>
-            </div>
+
+{% block rightBox %}
+    <div class="rightBox">
+        <div class="panel"><a class="panel-body" href="http://www.oldboyedu.com/"><img
+                src="/static/img/ad_1.jpg" width="190"></a></div>
+        <div class="panel"><a class="panel-body" href="https://www.luffycity.com/home"><img
+                src="/static/img/ad_2.jpg" width="190"></a></div>
+        <div class="panel panel-default">
+            <div class="panel-heading">广告位招租</div>
+            <div class="panel-body">广告位招租</div>
+            <div class="panel-body">广告位招租</div>
         </div>
     </div>
-</div>
+{% endblock %}
 
 
-</body>
-</html>
+{% block js %}
+    <script type="text/javascript">
+        $(function () {
+            $(".dropdown-toggle").click(function () {
+                $(this).siblings('.dropdown-menu').toggle()
+            })
+        })
+    </script>
+{% endblock %}

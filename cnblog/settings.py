@@ -151,12 +151,10 @@ STATICFILES_DIRS = [
 # 配置1：用户上传头像的文件
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-
 # 配置2：开放media目录给用户
 MEDIA_URL = "/media/"
 
 
-"""
 # 发送邮件
 EMAIL_USE_SSL = True
 # EMIAL_HOST = 'smtp.exmail.qq.com'       # 如果是163 改成smtp.163.com
@@ -165,12 +163,31 @@ EMAIL_PORT = 465
 EMAIL_HOST_USER = '719630940@qq.com'        # 账号
 EMAIL_HOST_PASSWORD = 'ordcybvnndzubdie'    # qq邮箱的授权码而不是密码
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-"""
+
 
 
 LOGIN_URL = "/login/"
 
 
+# 日志文件目录
+LOGFILES_DIRS = os.path.join(BASE_DIR, 'logger')
 
 
-
+# sql语句的logger
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['console'],
+            'propagate': True,
+            'level': 'DEBUG',
+        },
+    }
+}

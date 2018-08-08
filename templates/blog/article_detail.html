@@ -1,13 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="/static/bootstrap3/css/bootstrap.css">
-    <script src="/static/js/jquery-3.2.1.min.js"></script>
+{% extends 'blog/home_site.html' %}
+
+{% block title %}
+    <title>{{ article_obj.title }}-博客园</title>
+{% endblock %}
+
+{% block css %}
     <style type="text/css">
         .glyphicon-comment {
             vertical-align: -1px;
+        }
+
+        .tree_btn {
+            margin: 20px 0;
         }
 
         #div_digg {
@@ -54,6 +58,7 @@
             border: 1px solid #ccc;
             padding: 4px 4px 4px 30px;
             width: 230px;
+            margin-bottom: 10px;
         }
 
         .comment_content {
@@ -65,174 +70,161 @@
             cursor: pointer;
 
         }
-        .comment_item{
+
+        .comment_item {
             margin-left: 20px;
         }
     </style>
-</head>
-<body>
+
+{% endblock %}
 
 
-<div class="site-header">
-    <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#">
-                    {{ blog.title }}
-                </a>
-            </div>
-            <div class="navbar-header pull-right">
-                <a class="navbar-brand" href="#">
-                    管理
-                </a>
-            </div>
-        </div>
-    </nav>
+{% block leftBox %}
+    {% load my_tags %}
 
-</div>
+    {% get_classification_style username %}
+{% endblock %}
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-3">
-            {% load my_tags %}
+{% block midBox %}
+    <div>
+        {% csrf_token %}
+        <div class="article_info ">
+            <h3 class="text-center">{{ article_obj.title }}</h3>
+            <div> {{ article_obj.content|safe }}</div>
 
-            {% get_classification_style username %}
-        </div>
-
-
-        <div class="col-md-8">
-            {% csrf_token %}
-            <div class="article_info ">
-                <h3 class="text-center">{{ article_obj.title }}</h3>
-                <div> {{ article_obj.content|safe }}</div>
-
-                <div class="clearfix">
-                    <div id="div_digg">
-                        <div class="diggit action">
-                            <span class="diggnum" id="digg_count">{{ article_obj.up_count }}</span>
-                        </div>
-                        <div class="buryit action">
-                            <span class="burynum" id="bury_count">0</span>
-                        </div>
-                        <div class="clear"></div>
-                        <div class="diggword" id="digg_tips"></div>
+            <div class="clearfix">
+                <div id="div_digg">
+                    <div class="diggit action">
+                        <span class="diggnum" id="digg_count">{{ article_obj.up_count }}</span>
                     </div>
+                    <div class="buryit action">
+                        <span class="burynum" id="bury_count">{{ article_obj.down_count }}</span>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="diggword" id="digg_tips"></div>
+                </div>
+            </div>
+
+            <div class="comments list-group">
+                <p class="tree_btn btn btn-default">评论树</p>
+                <div class="comment_tree">
+
                 </div>
 
-                <div class="comments list-group">
-                    <p class="tree_btn">评论树</p>
-                    <div class="comment_tree">
 
-                    </div>
+                <p>评论列表</p>
+                <ul class="list-group comment_list">
+                    {% for comment in comment_list %}
+                        <li class="list-group-item">
+                            <div class="comment_head">
+                                <a href=""># {{ forloop.counter }}楼</a>&nbsp;&nbsp;
+                                <span>{{ comment.create_time|date:"Y-m-d H:i" }}</span>&nbsp;&nbsp;
+                                <a href="">{{ comment.user.username }}</a>
+                                <span class="pull-right reply_btn" username="{{ comment.user.username }}"
+                                      parent_comment_pk="{{ comment.pk }}">回复</span>
+                            </div>
 
-
-                    <p>评论列表</p>
-                    <ul class="list-group comment_list">
-                        {% for comment in comment_list %}
-                            <li class="list-group-item">
-                                <div class="comment_head">
-                                    <a href=""># {{ forloop.counter }}楼</a>&nbsp;&nbsp;
-                                    <span>{{ comment.create_time|date:"Y-m-d H:i" }}</span>&nbsp;&nbsp;
-                                    <a href="">{{ comment.user.username }}</a>
-                                    <span class="pull-right reply_btn" username="{{ comment.user.username }}"
-                                          parent_comment_pk="{{ comment.pk }}">回复</span>
+                            {% if comment.parent_comment_id %}
+                                <div class="parent_info well">
+                                    <p>{{ comment.parent_comment.user.username }}:{{ comment.parent_comment.content }}</p>
                                 </div>
+                            {% endif %}
 
-                                {% if comment.parent_comment_id %}
-                                    <div class="parent_info well">
-                                        <p>{{ comment.parent_comment.user.username }}:{{ comment.parent_comment.content }}</p>
-                                    </div>
-                                {% endif %}
+                            <div class="comment_content">
+                                <p>{{ comment.content }}</p>
+                            </div>
 
-                                <div class="comment_content">
-                                    <p>{{ comment.content }}</p>
-                                </div>
+                        </li>
+                    {% endfor %}
 
-                            </li>
-                        {% endfor %}
+                </ul>
 
-                    </ul>
-
-                    <p>发表评论</p>
-                    <p>昵称</p><input type="text" id="tbCommentAuthor" class="author" disabled="disabled" size="50"
-                                    value="{{ request.user.username }}">
-                    <p>评论内容</p>
-                    <textarea name="" id="comment_content" cols="60" rows="10"></textarea>
-                    <p>
-                        <button class="btn btn-default comment_btn">提交评论</button>
-                    </p>
-                </div>
-
+                <p>发表评论</p>
+                <p>昵称</p><input type="text" id="tbCommentAuthor" class="author" disabled="disabled" size="50"
+                                value="{{ request.user.username }}">
+                <p>评论内容</p>
+                <textarea name="" id="comment_content" cols="60" rows="10"></textarea>
+                <p>
+                    <button class="btn btn-default comment_btn">提交评论</button>
+                </p>
             </div>
+
         </div>
     </div>
-</div>
 
-<script>
-    //点赞请求
-    $("#div_digg .action").click(function () {
-        var is_up = $(this).hasClass("diggit");
+{% endblock %}
 
-        $obj = $(this).children("span");        // 获取点赞数
 
-        $.ajax({
-            url: "/digg/",
-            type: "post",
-            data: {
-                "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val(),
-                "is_up": is_up,
-                "article_id":{{ article_obj.pk }}
-            },
-            success: function (data) {
-                // 点赞 +1
-                if (data.state) {
-                    var val = parseInt($obj.text());
-                    $obj.text(val + 1)
+{% block js %}
 
-                } else {
+    <script type="text/javascript">
+        //点赞请求
+        $("#div_digg .action").click(function () {
+            var is_up = $(this).hasClass("diggit");
 
-                    //点赞过了
-                    var val = data.handled ? "您已经推荐过了" : "您已经反对过了"
-                    $('#digg_tips').html(val)
+            $obj = $(this).children("span");        // 获取点赞数
 
-                    setTimeout(function () {
-                        $("#digg_tips").html("")
-                    }, 2000)
+
+            $.ajax({
+                url: "/digg/",
+                type: "post",
+                data: {
+                    "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val(),
+                    "is_up": is_up,
+                    "article_id":{{ article_obj.pk }}
+                },
+                success: function (data) {
+                    console.log(data)
+                    // 点赞 +1
+                    if (data.state) {
+                        var val = parseInt($obj.text());
+                        $obj.text(val + 1)
+
+                    } else {
+
+                        //点赞过了
+                        var val = data.handled ? "您已经推荐过了" : "您已经反对过了"
+                        $('#digg_tips').html(val)
+
+                        setTimeout(function () {
+                            $("#digg_tips").html("")
+                        }, 2000)
+                    }
                 }
-            }
+            })
         })
-    })
 
-    //评论请求
-    var parent_id = "";
+        //评论请求
+        var parent_id = "";
 
-    $('.comment_btn').click(function () {
-        var content = $("#comment_content").val()
+        $('.comment_btn').click(function () {
 
-        if (parent_id) {
-            var index = content.indexOf("\n")
-            content = content.slice(index + 1)
-        }
+            var content = $("#comment_content").val()
 
-        $.ajax({
-            url: '/comment/',
-            type: "post",
-            data: {
-                "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val(),
-                "article_id":{{ article_obj.pk }},
-                "content": content,
-                "parent_id": parent_id
+            if (parent_id) {
+                var index = content.indexOf("\n")
+                content = content.slice(index + 1)
+            }
 
-            },
-            success: function (data) {
-                console.log(data);
+            $.ajax({
+                url: '/comment/',
+                type: "post",
+                data: {
+                    "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val(),
+                    "article_id":{{ article_obj.pk }},
+                    "content": content,
+                    "parent_id": parent_id
 
-                // dom操作  es6  标签字符串
-                var create_time = data.create_time
-                var username = data.username
-                var content = data.content
+                },
+                success: function (data) {
+                    console.log(data);
 
-                var s = `
+                    // dom操作  es6  标签字符串
+                    var create_time = data.create_time
+                    var username = data.username
+                    var content = data.content
+
+                    var s = `
                         <li class="list-group-item">
                             <div class="comment_head">
                                 <span>${create_time}</span>&nbsp;&nbsp;
@@ -246,61 +238,63 @@
                         </li>`;
 
 
-                $("ul.comment_list").append(s)
+                    $("ul.comment_list").append(s)
 
-                //清空评论框
-                parent_id = ""
-                $("#comment_content").val("")
-            }
+                    //清空评论框
+                    parent_id = ""
+                    $("#comment_content").val("")
+                }
+            })
+
+
+        })
+
+        //回复按钮事件
+        $(".reply_btn").click(function () {
+
+            $("#comment_content").focus()
+            var val = "@" + $(this).attr("username") + "\n";
+            $("#comment_content").val(val)
+
+            parent_id = $(this).attr("parent_comment_pk")
+
         })
 
 
-    })
+        //评论树
+        $(".tree_btn").click(function () {
 
-    //回复按钮事件
-    $(".reply_btn").click(function () {
+            $.ajax({
+                url: "/get_comment_tree/",
+                type: "get",
+                data: {
+                    article_id:{{ article_obj.pk }}
+                },
+                success: function (comment_list) {
+                    $.each(comment_list, function (index, comment_object) {
+                        var pk = comment_object.pk
+                        var content = comment_object.content
+                        var parent_comment_id = comment_object.parent_comment_id
 
-        $("#comment_content").focus()
-        var val = "@" + $(this).attr("username") + "\n";
-        $("#comment_content").val(val)
+                        var s = '<div class="comment_item well" comment_id=' + pk + '><span>' + content + '</span>' + '</div>'
 
-        parent_id = $(this).attr("parent_comment_pk")
+                        if (!parent_comment_id) {
+                            //根评论展示
+                            $(".comment_tree").append(s)
 
-    })
+                        } else {
+                            //子评论展示
+                            $("[comment_id=" + parent_comment_id + "]").append(s)
+                        }
+
+                    })
+                }
+            })
+
+            $('.comment_tree').html("")
 
 
-    //评论树
-    $(".tree_btn").click(function () {
-        $.ajax({
-            url: "/get_comment_tree/",
-            type: "get",
-            data: {
-                article_id:{{ article_obj.pk }}
-            },
-            success: function (comment_list) {
-                console.log(comment_list)
-
-                $.each(comment_list, function (index, comment_object) {
-                    var pk = comment_object.pk
-                    var content = comment_object.content
-                    var parent_comment_id = comment_object.parent_comment_id
-
-                    var s = '<div class="comment_item well" comment_id=' + pk + '><span>' + content + '</span>' + '</div>'
-
-                    if (!parent_comment_id) {
-                        //根评论展示
-                        $(".comment_tree").append(s)
-
-                    } else {
-                        //子评论展示
-                        $("[comment_id="+parent_comment_id+ "]").append(s)
-                    }
-
-                })
-            }
         })
-    })
 
-</script>
-</body>
-</html>
+    </script>
+{% endblock %}

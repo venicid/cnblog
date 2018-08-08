@@ -1,8 +1,6 @@
 # 博客系统的表关系：
 from django.db import models
 
-# Create your models here.
-
 from django.contrib.auth.models import AbstractUser
 
 
@@ -64,9 +62,9 @@ class Article(models.Model):
     create_time = models.DateTimeField(verbose_name='创建时间', auto_now_add=True)
     content = models.TextField()
 
-    comment_count = models.IntegerField(default=0)      # 评论数
-    up_count = models.IntegerField(default=0)           # 点赞数
-    down_count = models.IntegerField(default=0)         # 踩数
+    comment_count = models.IntegerField(default=0)  # 评论数
+    up_count = models.IntegerField(default=0)  # 点赞数
+    down_count = models.IntegerField(default=0)  # 踩数
 
     user = models.ForeignKey(verbose_name='作者', to='UserInfo', to_field='nid', on_delete=models.CASCADE)
     category = models.ForeignKey(to='Category', to_field='nid', null=True, on_delete=models.CASCADE)
@@ -100,10 +98,11 @@ class ArticleUpDown(models.Model):
     点赞表
     """
     nid = models.AutoField(primary_key=True)
-    user = models.ForeignKey('UserInfo', null=True, on_delete=models.CASCADE)           # alex
-    article = models.ForeignKey("Article", null=True, on_delete=models.CASCADE)         # art1
-    is_up = models.BooleanField(default=True)                                           # 1
-                                                                                        # 用户alex，对文章art1，赞了一下
+    user = models.ForeignKey('UserInfo', null=True, on_delete=models.CASCADE)  # alex
+    article = models.ForeignKey("Article", null=True, on_delete=models.CASCADE)  # art1
+    is_up = models.BooleanField(default=True)  # 1
+
+    # 用户alex，对文章art1，赞了一下
     class Meta:
         unique_together = [
             ('article', 'user'),
@@ -112,9 +111,7 @@ class ArticleUpDown(models.Model):
 
 class Comment(models.Model):
     """
-
     评论表
-
     """
     nid = models.AutoField(primary_key=True)
     article = models.ForeignKey(verbose_name='评论文章', to='Article', to_field='nid', on_delete=models.CASCADE)
@@ -123,20 +120,5 @@ class Comment(models.Model):
     create_time = models.DateTimeField(verbose_name='创建时间', auto_now_add=True)
     parent_comment = models.ForeignKey('self', null=True, on_delete=models.CASCADE)
 
-    # parent_comment = models.ForeignKey('Comment', null=True, on_delete=models.CASCADE)   # 自关联
-
     def __str__(self):
         return self.content
-
-
-
-
-
-
-
-
-
-
-
-
-

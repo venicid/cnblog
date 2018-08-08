@@ -1,9 +1,10 @@
 from django.contrib import admin
 
-# Register your models here.
-
-# 注册你的models表
 from blog import models
+
+# Register your models here.
+# 注册你的models表
+
 admin.site.register(models.UserInfo)
 admin.site.register(models.Blog)
 admin.site.register(models.Category)

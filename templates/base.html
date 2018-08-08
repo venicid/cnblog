@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% block title %}
+        <title>Title</title>
+    {% endblock %}
+    <link rel="stylesheet" href="/static/bootstrap3/css/bootstrap.css">
+    <script src="/static/js/jquery-3.2.1.min.js"></script>
+
+
+    {% block css %}
+
+
+    {% endblock %}
+
+
+</head>
+<body>
+<div class="site-header">
+    {% block site-header %}
+
+    {% endblock %}
+
+</div>
+
+<div class="site-body">
+    <div class="col-md-2">
+        {% block leftBox %}
+
+        {% endblock %}
+    </div>
+
+    <div class="col-md-8">
+        {% block midBox %}
+
+        {% endblock %}
+    </div>
+
+    <div class="col-md-2">
+        {% block rightBox %}
+
+        {% endblock %}
+    </div>
+</div>
+
+
+</body>
+{% block js %}
+
+{% endblock %}
+</html>
