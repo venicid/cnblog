@@ -259,6 +259,15 @@ def get_classification_style(username):
 from django.db import transaction  # 事务操作
 ```
 
+13、富文本编辑框
+```
+KindEditor
+```
+
+14、防止xss攻击
+```
+from bs4 import BeautifulSoup
+```
 
 
 ### 四、鸣谢

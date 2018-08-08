@@ -5,34 +5,7 @@
 {% endblock %}
 
 {% block css %}
-    <style type="text/css">
-        * {
-            margin: 0;
-            padding: 0;
-        }
-
-        li {
-            list-style: none;
-        }
-
-        body {
-            font-family: verdana, Arial, Helvetica, sans-serif;
-            font-size: 10pt;
-            line-height: 1.8em;
-        }
-        #id_user_icon {
-            margin-right: 10px;
-            vertical-align: -2px;
-        }
-
-        .pub_info {
-            margin-top: 10px;
-        }
-
-        .pub_info .glyphicon-comment {
-            vertical-align: -1px;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/css/index.css">
 
 {% endblock %}
 
@@ -98,11 +71,5 @@
 
 
 {% block js %}
-    <script type="text/javascript">
-        $(function () {
-            $(".dropdown-toggle").click(function () {
-                $(this).siblings('.dropdown-menu').toggle()
-            })
-        })
-    </script>
+    <script src="/static/js/index.js"></script>
 {% endblock %}
