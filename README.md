@@ -15,7 +15,8 @@
 tree.txt          该项目的所有文件
 requirements.txt  依赖包文件
 img-floder        项目效果图
-tables		  表关系
+tables		      表关系
+cnblog.sql		  cnblog库
 ```
 
 2、环境安装：
@@ -30,13 +31,22 @@ tables		  表关系
 请您打开CMD控制台，到依赖包同目录下，执行：pip install -r requirements.txt
 ```
 
-4、测试用例文档给您提供了更好的测试思路，您可以通过测试用例达到更好的测试效果
+4、您需要安装mysql数据库，导入cnblog数据库表
+```
+>mysql -uroot -ppassword
+>CREATE DATABASE cnblog;
+>use cnblog;
+>set names utf8;
+>source cnblog.sql
+```
 
-5、该项目博客地址: [<https://www.cnblogs.com/venicid/category/1261668.html>]
+5、测试用例文档给您提供了更好的测试思路，您可以通过测试用例达到更好的测试效果
 
-6、github地址： [<https://github.com/venicid/cnblog>]
+6、该项目博客地址: [<https://www.cnblogs.com/venicid/category/1261668.html>]
 
-7、效果图
+7、github地址： [<https://github.com/venicid/cnblog>]
+
+8、效果图
 
 ![1533721366225](https://github.com/venicid/cnblog/blob/master/img-floder/index.png?raw=true)
 
