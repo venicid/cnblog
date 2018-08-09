@@ -38,7 +38,7 @@ tables			 表关系
 
 7、效果图
 
-![1533721366225](C:\Users\Venicid\AppData\Local\Temp\1533721366225.png)
+![1533721366225](https://github.com/venicid/cnblog/blob/master/img-floder/index.png?raw=true)
 
 ### 二、项目流程
 

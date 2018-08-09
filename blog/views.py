@@ -79,8 +79,15 @@ def register(request):
             if avatar_obj:
                 extra_fields["avatar"] = avatar_obj
 
-            UserInfo.objects.create_user(username=user, password=pwd, email=email, **extra_fields)
+            # 生成用户，blog，tag，category
+            with transaction.atomic():
+                blog_obj = models.Blog.objects.create(title="%s的博客" % user, site_name=user, theme="%s的css" % user)
+                UserInfo.objects.create_user(username=user, password=pwd, email=email, blog=blog_obj, **extra_fields)
+                models.Tag.objects.create(title="%s的生活"%user,blog=blog_obj)
+                models.Category.objects.create(title="%s的IT"%user,blog=blog_obj)
+
             login_logger.info("【%s】注册成功！" % user)
+
         else:
             response['msg'] = form.errors
 
@@ -184,6 +191,7 @@ def article_detail(request, username, article_id):
                   {"blog": blog, "article_obj": article_obj, "username": username, "comment_list": comment_list})
 
 
+@login_required
 def digg(request):
     """点赞视图"""
     article_id = request.POST.get("article_id")
