@@ -15,7 +15,7 @@
 tree.txt          该项目的所有文件
 requirements.txt  依赖包文件
 img-floder        项目效果图
-tables			 表关系
+tables		  表关系
 ```
 
 2、环境安装：
