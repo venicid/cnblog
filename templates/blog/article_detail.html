@@ -49,7 +49,7 @@
                             <div class="comment_head">
                                 <a href=""># {{ forloop.counter }}楼</a>&nbsp;&nbsp;
                                 <span>{{ comment.create_time|date:"Y-m-d H:i" }}</span>&nbsp;&nbsp;
-                                <a href="">{{ comment.user.username }}</a>
+                                <a href="/{{ comment.user.username }}/">{{ comment.user.username }}</a>
                                 <span class="pull-right reply_btn" username="{{ comment.user.username }}"
                                       parent_comment_pk="{{ comment.pk }}">回复</span>
                             </div>

@@ -83,8 +83,8 @@ def register(request):
             with transaction.atomic():
                 blog_obj = models.Blog.objects.create(title="%s的博客" % user, site_name=user, theme="%s的css" % user)
                 UserInfo.objects.create_user(username=user, password=pwd, email=email, blog=blog_obj, **extra_fields)
-                models.Tag.objects.create(title="%s的生活"%user,blog=blog_obj)
-                models.Category.objects.create(title="%s的IT"%user,blog=blog_obj)
+                models.Tag.objects.create(title="%s的生活" % user, blog=blog_obj)
+                models.Category.objects.create(title="%s的IT" % user, blog=blog_obj)
 
             login_logger.info("【%s】注册成功！" % user)
 
@@ -191,16 +191,19 @@ def article_detail(request, username, article_id):
                   {"blog": blog, "article_obj": article_obj, "username": username, "comment_list": comment_list})
 
 
-@login_required
 def digg(request):
     """点赞视图"""
-    article_id = request.POST.get("article_id")
-    is_up = json.loads(request.POST.get("is_up"))  # True
+    response = {"user": True, "state": True, "msg": None, "handled": None}
+
     user_id = request.user.pk  # 点赞人即为登录人
+    if not user_id:
+        response["user"] = False
+        return JsonResponse(response)
 
     # 点赞记录以及存在
+    article_id = request.POST.get("article_id")
+    is_up = json.loads(request.POST.get("is_up"))  # True
 
-    response = {"state": True, "msg": None, "handled": None}
     article_obj = models.Article.objects.filter(pk=article_id).first()
     obj = models.ArticleUpDown.objects.filter(user_id=user_id, article_id=article_id).first()
     if not obj:
@@ -213,7 +216,7 @@ def digg(request):
             queryset.update(up_count=F("up_count") + 1)
         else:
             handle_logger.info("[%s]踩了下[%s]文章" % (request.user.username, article_obj.title))
-            queryset.update(down_count=F("down_count") - 1)
+            queryset.update(down_count=F("down_count") + 1)
     else:
         response['state'] = False
         response['handled'] = obj.is_up
@@ -221,38 +224,48 @@ def digg(request):
     return JsonResponse(response)
 
 
-@login_required
 def comment(request):
     """评论视图"""
-    article_id = request.POST.get("article_id")
+    response = {"username": True}
+
+    user_id = request.user.pk  # 点赞人即为登录人
+    if not user_id:
+        response["username"] = False
+        return JsonResponse(response)
+
     content = request.POST.get("content")
-    parent_id = request.POST.get("parent_id")
-    user_id = request.user.pk
+    if len(content) == 0:
+        response["content"] = None
+        return JsonResponse(response)
+    else:
+        article_id = request.POST.get("article_id")
 
-    article_obj = models.Article.objects.filter(pk=article_id).first()
+        parent_id = request.POST.get("parent_id")
 
-    # 事务操作
-    with transaction.atomic():
-        comment_obj = models.Comment.objects.create(user_id=user_id, article_id=article_id,
-                                                    content=content, parent_comment_id=parent_id)
-        models.Article.objects.filter(pk=article_id).update(comment_count=F("comment_count") + 1)
+        article_obj = models.Article.objects.filter(pk=article_id).first()
 
-    handle_logger.info("[%s]评论了[%s]文章，评论内容是%s" % (request.user.username, article_obj.title, content))
+        # 事务操作
+        with transaction.atomic():
+            comment_obj = models.Comment.objects.create(user_id=user_id, article_id=article_id,
+                                                        content=content, parent_comment_id=parent_id)
+            models.Article.objects.filter(pk=article_id).update(comment_count=F("comment_count") + 1)
 
-    # 多进程发送邮件
-    t = threading.Thread(target=send_mail, args=("你的文章【%s】新增了一条评论内容" % article_obj.title,
-                                                 content,
-                                                 settings.EMAIL_HOST_USER,
-                                                 [request.user.email],
-                                                 ))
-    t.start()
+        handle_logger.info("[%s]评论了[%s]文章，评论内容是%s" % (request.user.username, article_obj.title, content))
 
-    response = {}
-    response["create_time"] = comment_obj.create_time.strftime("%Y-%m-%d %X")
-    response["username"] = request.user.username
-    response["content"] = content
+        # 多进程发送邮件
+        t = threading.Thread(target=send_mail, args=("你的文章【%s】新增了一条评论内容" % article_obj.title,
+                                                     content,
+                                                     settings.EMAIL_HOST_USER,
+                                                     [request.user.email],
+                                                     ))
+        t.start()
 
-    return JsonResponse(response)
+        response = {}
+        response["create_time"] = comment_obj.create_time.strftime("%Y-%m-%d %X")
+        response["username"] = request.user.username
+        response["content"] = content
+
+        return JsonResponse(response)
 
 
 def get_comment_tree(request):

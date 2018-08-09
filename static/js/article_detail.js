@@ -17,25 +17,30 @@ $(function () {
             data: {
                 "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val(),
                 "is_up": is_up,
-                "article_id":article_id,
+                "article_id": article_id,
             },
             success: function (data) {
-                console.log(data)
                 // 点赞 +1
-                if (data.state) {
-                    var val = parseInt($obj.text());
-                    $obj.text(val + 1)
-
+                if (!data.user) {
+                    alert('请先登录！')
+                    location.href = '/login/'
                 } else {
+                    if (data.state) {
+                        var val = parseInt($obj.text());
+                        $obj.text(val + 1)
 
-                    //点赞过了
-                    var val = data.handled ? "您已经推荐过了" : "您已经反对过了"
-                    $('#digg_tips').html(val)
+                    } else {
 
-                    setTimeout(function () {
-                        $("#digg_tips").html("")
-                    }, 2000)
+                        //点赞过了
+                        var val = data.handled ? "您已经推荐过了" : "您已经反对过了"
+                        $('#digg_tips').html(val)
+
+                        setTimeout(function () {
+                            $("#digg_tips").html("")
+                        }, 2000)
+                    }
                 }
+
             }
         })
     })
@@ -59,20 +64,26 @@ $(function () {
             type: "post",
             data: {
                 "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val(),
-                "article_id":article_id,
+                "article_id": article_id,
                 "content": content,
                 "parent_id": parent_id,
 
             },
             success: function (data) {
-                console.log(data);
+                if (!data.username) {
+                    alert('请先登录！')
+                    location.href = '/login/'
+                } else {
+                    if (!data.content) {
+                        alert('请先输入内容')
+                    }
+                    else {
+                        // dom操作  es6  标签字符串
+                        var create_time = data.create_time
+                        var username = data.username
+                        var content = data.content
 
-                // dom操作  es6  标签字符串
-                var create_time = data.create_time
-                var username = data.username
-                var content = data.content
-
-                var s = `
+                        var s = `
                 <li class="list-group-item">
                     <div class="comment_head">
                         <span>${create_time}</span>&nbsp;&nbsp;
@@ -86,11 +97,14 @@ $(function () {
                 </li>`;
 
 
-                $("ul.comment_list").append(s)
+                        $("ul.comment_list").append(s)
 
-                //清空评论框
-                parent_id = ""
-                $("#comment_content").val("")
+                        //清空评论框
+                        parent_id = ""
+                        $("#comment_content").val("")
+                    }
+                }
+
             }
         })
 
@@ -116,7 +130,7 @@ $(function () {
             url: "/get_comment_tree/",
             type: "get",
             data: {
-                article_id:article_id
+                article_id: article_id
             },
             success: function (comment_list) {
                 $.each(comment_list, function (index, comment_object) {
